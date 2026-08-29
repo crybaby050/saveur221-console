@@ -16,7 +16,12 @@ import com.saveur221.repositories.ProduitRepository;
 
 import java.time.LocalDateTime;
 import java.time.Year;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import com.saveur221.entities.Produit;
+import java.util.HashMap;
 import java.util.Map;
 
 public class CommandeService {
@@ -28,10 +33,10 @@ public class CommandeService {
     private final FactureService factureService;
 
     public CommandeService(CommandeRepository commandeRepository,
-                            LigneCommandeRepository ligneCommandeRepository,
-                            ProduitRepository produitRepository,
-                            ProduitService produitService,
-                            FactureService factureService) {
+            LigneCommandeRepository ligneCommandeRepository,
+            ProduitRepository produitRepository,
+            ProduitService produitService,
+            FactureService factureService) {
         this.commandeRepository = commandeRepository;
         this.ligneCommandeRepository = ligneCommandeRepository;
         this.produitRepository = produitRepository;
@@ -49,7 +54,8 @@ public class CommandeService {
 
     public Commande rechercherParNumero(String numeroCommande) {
         return commandeRepository.findByNumeroCommande(numeroCommande)
-                .orElseThrow(() -> new CommandeInexistanteException("Aucune commande avec le numéro " + numeroCommande));
+                .orElseThrow(
+                        () -> new CommandeInexistanteException("Aucune commande avec le numéro " + numeroCommande));
     }
 
     // US "Enregistrer une commande sur place" : vente au comptoir, saisie
@@ -57,7 +63,7 @@ public class CommandeService {
     // vendue — c'est la couche vue (menu console) qui construit cette map
     // au fil des saisies de l'utilisateur.
     public Commande creerCommandeSurPlace(int clientId, Map<Integer, Integer> lignesSaisies,
-                                           StatutCommande statutInitial) {
+            StatutCommande statutInitial) {
         if (lignesSaisies.isEmpty()) {
             throw new CommandeInvalideException("Une commande doit contenir au moins un article.");
         }
@@ -78,7 +84,8 @@ public class CommandeService {
             // Règle métier : impossible de commander plus que la quantité disponible.
             if (quantite > produit.getQuantiteStock()) {
                 throw new StockInsuffisantException(
-                        "Stock insuffisant pour " + produit.getLibelle() + " (disponible : " + produit.getQuantiteStock() + ")");
+                        "Stock insuffisant pour " + produit.getLibelle() + " (disponible : "
+                                + produit.getQuantiteStock() + ")");
             }
 
             LigneCommande ligne = new LigneCommande(0, commande.getId(), produitId, quantite, produit.getPrix());
@@ -138,6 +145,87 @@ public class CommandeService {
             throw new TransitionStatutInvalideException(
                     "Transition impossible de " + statutActuel + " vers " + nouveauStatut);
         }
+    }
+
+    /**
+     * Objet de transfert simple regroupant les indicateurs du tableau de bord.
+     * Ne contient aucune logique, juste des données — la vue n'a qu'à lire ses
+     * champs pour les afficher, sans jamais recalculer quoi que ce soit elle-même.
+     */
+    public static class Statistiques {
+        public double chiffreAffairesJour;
+        public double chiffreAffairesSemaine;
+        public double chiffreAffairesMois;
+        public int nombreCommandes;
+        public int commandesEnCours;
+        public String produitLePlusVendu;
+        public List<String> top3Produits;
+    }
+
+    public Statistiques calculerStatistiques() {
+        List<Commande> toutesLesCommandes = commandeRepository.findAll();
+        LocalDateTime maintenant = LocalDateTime.now();
+
+        Statistiques stats = new Statistiques();
+        stats.nombreCommandes = toutesLesCommandes.size();
+
+        stats.commandesEnCours = (int) toutesLesCommandes.stream()
+                .filter(c -> c.getStatut() == StatutCommande.EN_ATTENTE
+                        || c.getStatut() == StatutCommande.EN_PREPARATION
+                        || c.getStatut() == StatutCommande.PRETE)
+                .count();
+
+        stats.chiffreAffairesJour = sommerMontants(toutesLesCommandes,
+                c -> c.getDateCommande().toLocalDate().equals(maintenant.toLocalDate()));
+
+        stats.chiffreAffairesSemaine = sommerMontants(toutesLesCommandes,
+                c -> c.getDateCommande().isAfter(maintenant.minusDays(7)));
+
+        stats.chiffreAffairesMois = sommerMontants(toutesLesCommandes,
+                c -> c.getDateCommande().getMonth() == maintenant.getMonth()
+                        && c.getDateCommande().getYear() == maintenant.getYear());
+
+        // Regroupe les lignes de toutes les commandes par produit, pour en
+        // déduire le produit le plus vendu et le top 3 — calcul volontairement
+        // simple (une seule passe en mémoire), suffisant pour le volume de
+        // données attendu dans ce projet.
+        Map<Integer, Integer> quantitesParProduit = new HashMap<>();
+        for (Commande commande : toutesLesCommandes) {
+            List<LigneCommande> lignes = ligneCommandeRepository.findByCommandeId(commande.getId());
+            for (LigneCommande ligne : lignes) {
+                quantitesParProduit.merge(ligne.getProduitId(), ligne.getQuantite(), Integer::sum);
+            }
+        }
+
+        List<Map.Entry<Integer, Integer>> classement = quantitesParProduit.entrySet().stream()
+                .sorted(Map.Entry.<Integer, Integer>comparingByValue().reversed())
+                .toList();
+
+        if (!classement.isEmpty()) {
+            int idProduitTop = classement.get(0).getKey();
+            stats.produitLePlusVendu = produitRepository.findById(idProduitTop)
+                    .map(Produit::getLibelle)
+                    .orElse("Produit inconnu (id " + idProduitTop + ")");
+        } else {
+            stats.produitLePlusVendu = "Aucune vente enregistrée";
+        }
+
+        stats.top3Produits = classement.stream()
+                .limit(3)
+                .map(entree -> produitRepository.findById(entree.getKey())
+                        .map(Produit::getLibelle)
+                        .orElse("Produit inconnu (id " + entree.getKey() + ")")
+                        + " (" + entree.getValue() + " vendus)")
+                .toList();
+
+        return stats;
+    }
+
+    private double sommerMontants(List<Commande> commandes, java.util.function.Predicate<Commande> filtre) {
+        return commandes.stream()
+                .filter(filtre)
+                .mapToDouble(Commande::getMontantTotal)
+                .sum();
     }
 
     // Numéro lisible du type CMD-2026-000231 — même logique de compteur
