@@ -1,13 +1,5 @@
 package com.saveur221.entities;
 
-/**
- * Catégorie de produits (ex. "Plats", "Boissons", "Desserts").
- *
- * <p>Une catégorie ne peut pas être supprimée tant qu'elle contient des
- * produits — règle vérifiée dans {@code CategorieService}, en complément
- * de la contrainte {@code ON DELETE RESTRICT} posée en base à titre de
- * filet de sécurité.</p>
- */
 public class Categorie {
 
     private int id;
@@ -23,17 +15,39 @@ public class Categorie {
         this.description = description;
     }
 
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+    public int getId() {
+        return id;
+    }
 
-    public String getNom() { return nom; }
-    public void setNom(String nom) { this.nom = nom; }
+    public void setId(int id) {
+        this.id = id;
+    }
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    public String getNom() {
+        return nom;
+    }
 
-    @Override
-    public String toString() {
-        return "Categorie{id=" + id + ", nom='" + nom + "'}";
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    // Une catégorie contenant des produits ne peut pas être supprimée — cette
+    // règle est vérifiée dans CategorieService, pas ici.
+
+    public String toChaine() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Categorie").append("\n");
+        sb.append("id : ").append(id).append("\n");
+        sb.append("nom : ").append(nom).append("\n");
+        sb.append("description : ").append(description).append("\n");
+        return sb.toString();
     }
 }
