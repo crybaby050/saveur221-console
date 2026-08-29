@@ -57,7 +57,7 @@ public class Router extends MenuView {
             // n'existent pas encore.
             case 1 -> new CategorieView(container.getCategorieService(), scanner).demarrer();
             case 2 -> new StockView(container.getProduitService(), container.getCategorieService(), scanner).demarrer();
-            case 3 -> System.out.println("Menu Commandes — à venir.");
+            case 3 -> new CommandeView(container.getCommandeService(), container.getClientService(),container.getProduitService(), container.getFactureService(), scanner).demarrer();
             case 4 -> System.out.println("Menu Paiements — à venir.");
             case 5 -> System.out.println("Menu Factures — à venir.");
             case 6 -> System.out.println("Statistiques — à venir.");
