@@ -91,14 +91,4 @@ public class FactureView extends MenuView {
         System.out.println(facture.get().toChaine());
     }
 
-    private int lireEntier(String message) {
-        while (true) {
-            System.out.print(message);
-            try {
-                return Integer.parseInt(scanner.nextLine().trim());
-            } catch (NumberFormatException e) {
-                System.out.println("Veuillez entrer un nombre entier valide.");
-            }
-        }
-    }
 }

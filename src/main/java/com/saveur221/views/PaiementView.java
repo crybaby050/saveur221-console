@@ -128,25 +128,4 @@ public class PaiementView extends MenuView {
         }
     }
 
-    private int lireEntier(String message) {
-        while (true) {
-            System.out.print(message);
-            try {
-                return Integer.parseInt(scanner.nextLine().trim());
-            } catch (NumberFormatException e) {
-                System.out.println("Veuillez entrer un nombre entier valide.");
-            }
-        }
-    }
-
-    private double lireDouble(String message) {
-        while (true) {
-            System.out.print(message);
-            try {
-                return Double.parseDouble(scanner.nextLine().trim());
-            } catch (NumberFormatException e) {
-                System.out.println("Veuillez entrer un nombre valide.");
-            }
-        }
-    }
 }
