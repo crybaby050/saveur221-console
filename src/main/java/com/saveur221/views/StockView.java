@@ -9,13 +9,6 @@ import com.saveur221.services.ProduitService;
 import java.util.List;
 import java.util.Scanner;
 
-/**
- * Menu de gestion des produits et du stock, accessible au Gérant (et donc
- * à l'Administrateur, qui possède tous les droits du Gérant).
- *
- * Regroupe les US06 à US13 du Sprint 2 : CRUD produit, recherche, filtrage
- * par catégorie, consultation du stock, approvisionnement et seuil d'alerte.
- */
 public class StockView extends MenuView {
 
     private final ProduitService produitService;
@@ -55,13 +48,11 @@ public class StockView extends MenuView {
                 case 7 -> approvisionner();
                 case 8 -> definirSeuilAlerte();
                 case 0 -> {
-                    return false; // retour au Router
+                    return false;
                 }
                 default -> System.out.println("Choix invalide, réessayez.");
             }
         } catch (ProduitInexistantException e) {
-            // Toute erreur métier prévisible (id invalide, etc.) est affichée
-            // proprement à l'utilisateur, sans jamais faire planter l'application.
             System.out.println("Erreur : " + e.getMessage());
         }
         return true;
@@ -94,25 +85,28 @@ public class StockView extends MenuView {
         System.out.println(produit.toChaine());
     }
 
+    // Chaque champ affiche l'ancienne valeur entre parenthèses ; une saisie
+    // vide (Entrée directe) conserve cette valeur telle quelle, plutôt que
+    // d'obliger à tout ressaisir pour ne changer qu'un seul champ.
     private void modifierProduit() {
         System.out.println();
         System.out.println("--- Modifier un produit ---");
 
         int id = lireEntier("Id du produit à modifier : ");
+        Produit produitActuel = produitService.consulterProduit(id);
 
-        System.out.print("Nouveau libellé : ");
-        String libelle = scanner.nextLine();
+        System.out.println("Laissez un champ vide pour conserver sa valeur actuelle.");
 
-        System.out.print("Nouvelle description : ");
-        String description = scanner.nextLine();
+        String libelle = lireTexteOptionnel("Libellé (" + produitActuel.getLibelle() + ") : ",
+                produitActuel.getLibelle());
 
-        double prix = lireDouble("Nouveau prix : ");
+        String description = lireTexteOptionnel("Description (" + produitActuel.getDescription() + ") : ",
+                produitActuel.getDescription());
 
-        int categorieId = choisirCategorie();
-        if (categorieId == -1) {
-            System.out.println("Modification annulée : aucune catégorie sélectionnée.");
-            return;
-        }
+        double prix = lireDoubleOptionnel("Prix (" + produitActuel.getPrix() + ") : ",
+                produitActuel.getPrix());
+
+        int categorieId = choisirCategorieOptionnelle(produitActuel.getCategorieId());
 
         produitService.modifierProduit(id, libelle, description, prix, categorieId);
         System.out.println("Produit modifié avec succès.");
@@ -181,8 +175,6 @@ public class StockView extends MenuView {
         System.out.println("Seuil d'alerte mis à jour.");
     }
 
-    // Affiche la liste des catégories disponibles et retourne l'id choisi,
-    // ou -1 si la saisie est invalide ou si aucune catégorie n'existe.
     private int choisirCategorie() {
         List<Categorie> categories = categorieService.listerCategories();
 
@@ -199,8 +191,32 @@ public class StockView extends MenuView {
         return lireEntier("Id de la catégorie : ");
     }
 
-    // Affiche chaque produit de la liste sur ses propres lignes (toChaine),
-    // séparés par une ligne vide pour rester lisible en console.
+    // Même liste que choisirCategorie(), mais avec conservation de la
+    // catégorie actuelle si l'utilisateur laisse la saisie vide.
+    private int choisirCategorieOptionnelle(int categorieActuelleId) {
+        List<Categorie> categories = categorieService.listerCategories();
+
+        System.out.println("Catégories disponibles :");
+        for (Categorie categorie : categories) {
+            String marqueur = categorie.getId() == categorieActuelleId ? " (actuelle)" : "";
+            System.out.println(categorie.getId() + " - " + categorie.getNom() + marqueur);
+        }
+
+        System.out.print("Id de la catégorie (laisser vide pour conserver l'actuelle) : ");
+        String saisie = scanner.nextLine().trim();
+
+        if (saisie.isEmpty()) {
+            return categorieActuelleId;
+        }
+
+        try {
+            return Integer.parseInt(saisie);
+        } catch (NumberFormatException e) {
+            System.out.println("Saisie invalide, catégorie actuelle conservée.");
+            return categorieActuelleId;
+        }
+    }
+
     private void afficherListeProduits(List<Produit> produits) {
         if (produits.isEmpty()) {
             System.out.println("Aucun produit à afficher.");
@@ -212,9 +228,6 @@ public class StockView extends MenuView {
         }
     }
 
-    // Lit un entier depuis la console, en redemandant tant que la saisie
-    // n'est pas un nombre valide — évite qu'une faute de frappe ne fasse
-    // planter l'application avec une NumberFormatException.
     private int lireEntier(String message) {
         while (true) {
             System.out.print(message);
@@ -234,6 +247,35 @@ public class StockView extends MenuView {
             } catch (NumberFormatException e) {
                 System.out.println("Veuillez entrer un nombre valide.");
             }
+        }
+    }
+
+    // Version "optionnelle" de la saisie texte : une entrée vide conserve
+    // la valeur actuelle passée en paramètre.
+    private String lireTexteOptionnel(String message, String valeurActuelle) {
+        System.out.print(message);
+        String saisie = scanner.nextLine();
+        return saisie.isBlank() ? valeurActuelle : saisie;
+    }
+
+    // Version "optionnelle" de la saisie numérique : une entrée vide ou
+    // invalide conserve la valeur actuelle plutôt que de redemander en boucle
+    // (comportement volontairement différent de lireDouble(), qui lui
+    // redemande jusqu'à obtenir une valeur — ici, vide = choix assumé de
+    // ne pas modifier, pas une erreur de saisie).
+    private double lireDoubleOptionnel(String message, double valeurActuelle) {
+        System.out.print(message);
+        String saisie = scanner.nextLine().trim();
+
+        if (saisie.isEmpty()) {
+            return valeurActuelle;
+        }
+
+        try {
+            return Double.parseDouble(saisie);
+        } catch (NumberFormatException e) {
+            System.out.println("Saisie invalide, valeur actuelle conservée.");
+            return valeurActuelle;
         }
     }
 }
