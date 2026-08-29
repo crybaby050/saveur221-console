@@ -27,8 +27,13 @@ public class UtilisateurService {
         return utilisateurRepository.rechercherParNom(motCle);
     }
 
+    public Utilisateur consulterUtilisateur(int id) {
+        return utilisateurRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Utilisateur introuvable avec l'id " + id));
+    }
+
     public Utilisateur ajouterUtilisateur(String nom, String prenom, String email,
-                                           String motDePasse, Role role) {
+            String motDePasse, Role role) {
         // Règle métier : l'email doit être unique.
         Optional<Utilisateur> existant = utilisateurRepository.findByEmail(email);
         if (existant.isPresent()) {

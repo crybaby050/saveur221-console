@@ -57,15 +57,14 @@ public class Router extends MenuView {
             // n'existent pas encore.
             case 1 -> new CategorieView(container.getCategorieService(), scanner).demarrer();
             case 2 -> new StockView(container.getProduitService(), container.getCategorieService(), scanner).demarrer();
-            case 3 -> new CommandeView(container.getCommandeService(), container.getClientService(),container.getProduitService(), container.getFactureService(), scanner).demarrer();
+            case 3 -> new CommandeView(container.getCommandeService(), container.getClientService(),
+                    container.getProduitService(), container.getFactureService(), scanner).demarrer();
             case 4 -> new PaiementView(container.getPaiementService(), container.getRecuService(), scanner).demarrer();
             case 5 -> new FactureView(container.getFactureService(), scanner).demarrer();
             case 6 -> System.out.println("Statistiques — à venir.");
             case 7 -> {
-                // Double vérification : même si l'option n'est pas affichée
-                // pour un GERANT, rien n'empêche de taper "7" au clavier.
                 if (utilisateurConnecte.getRole() == Role.ADMIN) {
-                    System.out.println("Menu Utilisateurs — à venir.");
+                    new UtilisateurView(container.getUtilisateurService(), scanner).demarrer();
                 } else {
                     System.out.println("Option invalide.");
                 }
