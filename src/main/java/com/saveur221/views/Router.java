@@ -56,7 +56,7 @@ public class Router extends MenuView {
             // un message temporaire évite de référencer des classes qui
             // n'existent pas encore.
             case 1 -> System.out.println("Menu Catégories — à venir.");
-            case 2 -> System.out.println("Menu Produits/Stock — à venir.");
+            case 2 -> new StockView(container.getProduitService(), container.getCategorieService(), scanner).demarrer();
             case 3 -> System.out.println("Menu Commandes — à venir.");
             case 4 -> System.out.println("Menu Paiements — à venir.");
             case 5 -> System.out.println("Menu Factures — à venir.");
