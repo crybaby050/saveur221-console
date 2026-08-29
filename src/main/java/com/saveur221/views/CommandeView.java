@@ -234,14 +234,4 @@ public class CommandeView extends MenuView {
         }
     }
 
-    private int lireEntier(String message) {
-        while (true) {
-            System.out.print(message);
-            try {
-                return Integer.parseInt(scanner.nextLine().trim());
-            } catch (NumberFormatException e) {
-                System.out.println("Veuillez entrer un nombre entier valide.");
-            }
-        }
-    }
 }
