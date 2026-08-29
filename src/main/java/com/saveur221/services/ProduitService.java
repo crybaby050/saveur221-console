@@ -35,7 +35,7 @@ public class ProduitService {
     }
 
     public Produit ajouterProduit(String libelle, String description, double prix,
-                                   int quantiteStock, int seuilAlerte, int categorieId) {
+            int quantiteStock, int seuilAlerte, int categorieId) {
         // "image" est toujours null à la création côté Java — c'est le
         // repository qui l'impose au niveau SQL, pas ce service.
         boolean disponible = quantiteStock > 0;
@@ -88,6 +88,11 @@ public class ProduitService {
         Produit produit = trouverOuLever(produitId);
         produit.restaurerStock(quantite);
         produitRepository.update(produit);
+    }
+
+    public Produit consulterProduit(int id) {
+        return produitRepository.findById(id)
+                .orElseThrow(() -> new ProduitInexistantException("Produit introuvable avec l'id " + id));
     }
 
     private Produit trouverOuLever(int id) {
