@@ -61,7 +61,7 @@ public class Router extends MenuView {
                     container.getProduitService(), container.getFactureService(), scanner).demarrer();
             case 4 -> new PaiementView(container.getPaiementService(), container.getRecuService(), scanner).demarrer();
             case 5 -> new FactureView(container.getFactureService(), scanner).demarrer();
-            case 6 -> System.out.println("Statistiques — à venir.");
+            case 6 -> new StatistiqueView(container.getCommandeService(), scanner).demarrer();
             case 7 -> {
                 if (utilisateurConnecte.getRole() == Role.ADMIN) {
                     new UtilisateurView(container.getUtilisateurService(), scanner).demarrer();
