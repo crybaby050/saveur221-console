@@ -31,6 +31,11 @@ public class CategorieService {
         return categorieRepository.rechercherParNom(motCle);
     }
 
+    public Categorie consulterCategorie(int id) {
+        return categorieRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Catégorie introuvable avec l'id " + id));
+    }
+
     public Categorie ajouterCategorie(String nom, String description) {
         Categorie categorie = new Categorie(0, nom, description);
         return categorieRepository.save(categorie);
@@ -38,8 +43,8 @@ public class CategorieService {
 
     public void modifierCategorie(int id, String nom, String description) {
         Optional<Categorie> resultat = categorieRepository.findById(id);
-        Categorie categorie = resultat.orElseThrow(() ->
-                new IllegalArgumentException("Catégorie introuvable avec l'id " + id));
+        Categorie categorie = resultat
+                .orElseThrow(() -> new IllegalArgumentException("Catégorie introuvable avec l'id " + id));
 
         categorie.setNom(nom);
         categorie.setDescription(description);
