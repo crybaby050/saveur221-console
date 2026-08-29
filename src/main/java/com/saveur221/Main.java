@@ -3,6 +3,7 @@ package com.saveur221;
 import com.saveur221.config.Container;
 import com.saveur221.entities.Utilisateur;
 import com.saveur221.views.LoginView;
+import com.saveur221.views.Router;
 
 import java.util.Scanner;
 
@@ -15,6 +16,9 @@ public class Main {
         LoginView loginView = new LoginView(container.getAuthService(), scanner);
         Utilisateur utilisateurConnecte = loginView.demarrerConnexion();
 
-        System.out.println("Menu principal à venir pour le rôle : " + utilisateurConnecte.getRole());
+        Router router = new Router(container, utilisateurConnecte, scanner);
+        router.demarrer();
+
+        System.out.println("Au revoir !");
     }
 }
