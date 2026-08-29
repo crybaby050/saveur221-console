@@ -59,7 +59,7 @@ public class Router extends MenuView {
             case 2 -> new StockView(container.getProduitService(), container.getCategorieService(), scanner).demarrer();
             case 3 -> new CommandeView(container.getCommandeService(), container.getClientService(),container.getProduitService(), container.getFactureService(), scanner).demarrer();
             case 4 -> new PaiementView(container.getPaiementService(), container.getRecuService(), scanner).demarrer();
-            case 5 -> System.out.println("Menu Factures — à venir.");
+            case 5 -> new FactureView(container.getFactureService(), scanner).demarrer();
             case 6 -> System.out.println("Statistiques — à venir.");
             case 7 -> {
                 // Double vérification : même si l'option n'est pas affichée
