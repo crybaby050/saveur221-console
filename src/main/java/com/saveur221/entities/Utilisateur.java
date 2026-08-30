@@ -2,31 +2,37 @@ package com.saveur221.entities;
 
 import com.saveur221.enums.Role;
 
+/**
+ * Représente un utilisateur de l'application.
+ */
 public class Utilisateur {
 
     private int id;
+
     private String nom;
+
     private String prenom;
 
-    // Règle métier : l'unicité de l'email est vérifiée en amont, dans le service,
-    // pas ici — cette classe ne fait que porter la donnée.
     private String email;
 
-    // Toujours stocké haché (jamais en clair) — le hachage est réalisé dans
-    // AuthService.
     private String motDePasse;
 
-    // Un compte désactivé ne peut pas se connecter (vérifié dans AuthService).
     private boolean actif;
 
-    // Détermine le menu affiché après connexion (ADMIN ou GERANT).
     private Role role;
 
     public Utilisateur() {
     }
 
-    public Utilisateur(int id, String nom, String prenom, String email,
-            String motDePasse, boolean actif, Role role) {
+    public Utilisateur(
+            int id,
+            String nom,
+            String prenom,
+            String email,
+            String motDePasse,
+            boolean actif,
+            Role role
+    ) {
         this.id = id;
         this.nom = nom;
         this.prenom = prenom;
@@ -92,9 +98,14 @@ public class Utilisateur {
         this.role = role;
     }
 
-    // Affichage multi-lignes utilisé par les vues console (menu utilisateurs, etc.)
+    /**
+     * Retourne une représentation textuelle de l'utilisateur.
+     *
+     * @return les informations de l'utilisateur sous forme de chaîne
+     */
     public String toChaine() {
         StringBuilder sb = new StringBuilder();
+
         sb.append("Utilisateur").append("\n");
         sb.append("id : ").append(id).append("\n");
         sb.append("nom : ").append(nom).append("\n");
@@ -102,6 +113,7 @@ public class Utilisateur {
         sb.append("email : ").append(email).append("\n");
         sb.append("actif : ").append(actif).append("\n");
         sb.append("role : ").append(role).append("\n");
+
         return sb.toString();
     }
 }
