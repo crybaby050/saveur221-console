@@ -131,7 +131,7 @@ public class CommandeRepository implements Repository<Commande, Integer> {
     @Override
     public Commande save(Commande entite) {
         String sql = "INSERT INTO commandes (numero_commande, client_id, date_commande, statut, " +
-            "statut_paiement, montant_total) VALUES (?, ?, ?, ?::statut_commande, ?::statut_paiement_commande, ?)";
+                "statut_paiement, montant_total) VALUES (?, ?, ?, ?::statut_commande, ?::statut_paiement_commande, ?)";
 
         try (Connection conn = DatabaseConnection.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -158,11 +158,8 @@ public class CommandeRepository implements Repository<Commande, Integer> {
 
     @Override
     public void update(Commande entite) {
-        SString sql = "UPDATE commandes SET statut = ?::statut_commande, " +
-            "statut_paiement = ?::statut_paiement_commande, montant_total = ? WHERE id = ?";
-        // Remarque : numero_commande, client_id et date_commande ne sont
-        // jamais modifiés après création — seuls les statuts et le montant
-        // (recalculé après ajout/annulation de lignes) évoluent dans le temps.
+        String sql = "UPDATE commandes SET statut = ?::statut_commande, " +
+                "statut_paiement = ?::statut_paiement_commande, montant_total = ? WHERE id = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
