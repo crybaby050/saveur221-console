@@ -7,27 +7,14 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 /**
- * Point d'accès unique à la connexion JDBC PostgreSQL.
+ * Gère la connexion JDBC à la base de données PostgreSQL.
  *
- * <p>
- * Les identifiants de connexion sont lus depuis un fichier {@code .env}
- * placé à la racine du projet (jamais committé dans Git — voir
- * {@code .gitignore}). Un fichier {@code .env.example} documente les
- * variables attendues pour toute personne clonant le dépôt.
- * </p>
- *
- * <p>
- * Implémentation volontairement minimale à ce stade du projet : une seule
- * connexion réutilisée tant qu'elle reste ouverte. Elle sera remplacée par un
- * pool de connexions (HikariCP) une fois l'injection de dépendances mise en
- * place.
- * </p>
+ * <p>Les paramètres de connexion sont chargés depuis le fichier {@code .env}.</p>
  */
 public class DatabaseConnection {
 
     private static final Dotenv dotenv = Dotenv.configure()
-            .ignoreIfMissing() // évite un crash si le fichier .env n'existe pas encore (ex. sur un
-                               // environnement de CI)
+            .ignoreIfMissing()
             .load();
 
     private static final String URL = dotenv.get("DB_URL");
@@ -37,35 +24,38 @@ public class DatabaseConnection {
     private static Connection connection;
 
     /**
-     * Constructeur privé : cette classe n'a pas vocation à être instanciée,
-     * seule sa méthode statique {@link #getConnection()} est utilisée.
+     * Empêche l'instanciation de cette classe utilitaire.
      */
     private DatabaseConnection() {
     }
 
     /**
-     * Retourne la connexion JDBC active, en la (re)créant si nécessaire.
+     * Retourne la connexion active ou en crée une nouvelle si nécessaire.
      *
-     * @return une connexion PostgreSQL ouverte et prête à l'emploi
-     * @throws RuntimeException si les variables d'environnement sont
-     *                          manquantes, ou si la connexion à la base de données
-     *                          échoue
+     * @return une connexion PostgreSQL ouverte
+     * @throws RuntimeException si la configuration ou la connexion échoue
      */
     public static Connection getConnection() {
         if (URL == null || USER == null) {
             throw new RuntimeException(
                     "Variables d'environnement DB_URL / DB_USER manquantes. " +
-                            "Vérifie la présence et le contenu du fichier .env à la racine du projet.");
+                    "Vérifie la présence et le contenu du fichier .env."
+            );
         }
 
         try {
             if (connection == null || connection.isClosed()) {
                 connection = DriverManager.getConnection(URL, USER, PASSWORD);
             }
+
             return connection;
+
         } catch (SQLException e) {
             throw new RuntimeException(
-                    "Impossible de se connecter à la base de données PostgreSQL : " + e.getMessage(), e);
+                    "Impossible de se connecter à la base de données PostgreSQL : "
+                            + e.getMessage(),
+                    e
+            );
         }
     }
 }

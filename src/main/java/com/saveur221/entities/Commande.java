@@ -7,24 +7,21 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Représente une commande passée par un client.
+ */
 public class Commande {
 
     private int id;
 
-    // Référence lisible générée par CommandeService, ex: CMD-2026-000231.
     private String numeroCommande;
 
     private int clientId;
+
     private LocalDateTime dateCommande;
 
-    // Créée depuis le PHP : naît à EN_ATTENTE et progresse dans le temps.
-    // Créée depuis le Java Console (vente au comptoir) : naît directement à
-    // PRETE ou RETIREE, choisi par le Gérant à la saisie.
     private StatutCommande statut;
 
-    // Évolue indépendamment du statut de préparation : une commande peut être
-    // RETIREE tout en restant IMPAYE si le client règle plus tard.
-    // Naît toujours à IMPAYE, mise à jour ensuite par PaiementService.
     private StatutPaiement statutPaiement;
 
     private double montantTotal;
@@ -34,8 +31,15 @@ public class Commande {
     public Commande() {
     }
 
-    public Commande(int id, String numeroCommande, int clientId, LocalDateTime dateCommande,
-            StatutCommande statut, StatutPaiement statutPaiement, double montantTotal) {
+    public Commande(
+            int id,
+            String numeroCommande,
+            int clientId,
+            LocalDateTime dateCommande,
+            StatutCommande statut,
+            StatutPaiement statutPaiement,
+            double montantTotal
+    ) {
         this.id = id;
         this.numeroCommande = numeroCommande;
         this.clientId = clientId;
@@ -113,16 +117,25 @@ public class Commande {
         this.lignes.add(ligne);
     }
 
-    // Calcule le total à partir des lignes ; ne persiste rien, c'est au
-    // service appelant de reporter le résultat en base.
+    /**
+     * Calcule le montant total de la commande à partir de ses lignes.
+     *
+     * @return le montant total calculé
+     */
     public double calculerMontantTotal() {
         return lignes.stream()
                 .mapToDouble(ligne -> ligne.getPrixUnitaire() * ligne.getQuantite())
                 .sum();
     }
 
+    /**
+     * Retourne une représentation textuelle de la commande.
+     *
+     * @return les informations de la commande sous forme de chaîne
+     */
     public String toChaine() {
         StringBuilder sb = new StringBuilder();
+
         sb.append("Commande").append("\n");
         sb.append("id : ").append(id).append("\n");
         sb.append("numeroCommande : ").append(numeroCommande).append("\n");
@@ -132,6 +145,7 @@ public class Commande {
         sb.append("statutPaiement : ").append(statutPaiement).append("\n");
         sb.append("montantTotal : ").append(montantTotal).append("\n");
         sb.append("nombreDeLignes : ").append(lignes.size()).append("\n");
+
         return sb.toString();
     }
 }

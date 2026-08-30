@@ -1,24 +1,36 @@
 package com.saveur221.entities;
 
+/**
+ * Représente un client de l'application.
+ */
 public class Client {
 
     private int id;
+
     private String nom;
+
     private String prenom;
+
     private String email;
 
-    // Présent uniquement pour correspondre à la structure de la table :
-    // le Java Console ne lit ni n'affiche jamais ce champ.
     private String motDePasse;
 
     private String telephone;
+
     private String adresse;
 
     public Client() {
     }
 
-    public Client(int id, String nom, String prenom, String email,
-            String motDePasse, String telephone, String adresse) {
+    public Client(
+            int id,
+            String nom,
+            String prenom,
+            String email,
+            String motDePasse,
+            String telephone,
+            String adresse
+    ) {
         this.id = id;
         this.nom = nom;
         this.prenom = prenom;
@@ -84,12 +96,14 @@ public class Client {
         this.adresse = adresse;
     }
 
-    // Le Java Console ne crée et ne modifie jamais de client — cette entité
-    // n'existe ici que pour la lecture (affichage sur une commande, recherche
-    // d'un client existant lors d'une vente au comptoir).
-
+    /**
+     * Retourne une représentation textuelle du client.
+     *
+     * @return les informations du client sous forme de chaîne
+     */
     public String toChaine() {
         StringBuilder sb = new StringBuilder();
+
         sb.append("Client").append("\n");
         sb.append("id : ").append(id).append("\n");
         sb.append("nom : ").append(nom).append("\n");
@@ -97,6 +111,7 @@ public class Client {
         sb.append("email : ").append(email).append("\n");
         sb.append("telephone : ").append(telephone).append("\n");
         sb.append("adresse : ").append(adresse).append("\n");
+
         return sb.toString();
     }
 }

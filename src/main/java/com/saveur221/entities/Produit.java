@@ -1,22 +1,24 @@
 package com.saveur221.entities;
 
+/**
+ * Représente un produit disponible à la vente.
+ */
 public class Produit {
 
     private int id;
+
     private String libelle;
+
     private String description;
+
     private double prix;
+
     private int quantiteStock;
 
-    // En dessous de ce seuil, le produit est signalé "stock faible" dans les vues.
     private int seuilAlerte;
 
-    // Recalculé automatiquement à chaque mouvement de stock (voir méthodes
-    // ci-dessous) — ne jamais le modifier manuellement depuis un service.
     private boolean disponible;
 
-    // Toujours null côté Java Console : l'upload et le stockage des images
-    // (Cloudinary) sont entièrement gérés par le module PHP Web.
     private String image;
 
     private int categorieId;
@@ -24,8 +26,17 @@ public class Produit {
     public Produit() {
     }
 
-    public Produit(int id, String libelle, String description, double prix, int quantiteStock,
-            int seuilAlerte, boolean disponible, String image, int categorieId) {
+    public Produit(
+            int id,
+            String libelle,
+            String description,
+            double prix,
+            int quantiteStock,
+            int seuilAlerte,
+            boolean disponible,
+            String image,
+            int categorieId
+    ) {
         this.id = id;
         this.libelle = libelle;
         this.description = description;
@@ -109,40 +120,69 @@ public class Produit {
         this.categorieId = categorieId;
     }
 
-    // Augmente le stock (US "Approvisionner un produit") et met à jour la
-    // disponibilité en conséquence.
+    /**
+     * Augmente la quantité disponible en stock.
+     *
+     * @param quantite quantité à ajouter au stock
+     */
     public void approvisionner(int quantite) {
         this.quantiteStock += quantite;
         recalculerDisponibilite();
     }
 
-    // Diminue le stock lors d'une vente (création de commande).
+    /**
+     * Diminue la quantité disponible en stock.
+     *
+     * @param quantite quantité à retirer du stock
+     */
     public void diminuerStock(int quantite) {
         this.quantiteStock -= quantite;
         recalculerDisponibilite();
     }
 
-    // Restitue le stock lors de l'annulation d'une commande.
+    /**
+     * Restaure une quantité précédemment retirée du stock.
+     *
+     * @param quantite quantité à restaurer
+     */
     public void restaurerStock(int quantite) {
         this.quantiteStock += quantite;
         recalculerDisponibilite();
     }
 
-    // Règle métier : si quantiteStock = 0, le produit devient indisponible.
+    /**
+     * Met à jour la disponibilité selon la quantité en stock.
+     */
     private void recalculerDisponibilite() {
         this.disponible = this.quantiteStock > 0;
     }
 
+    /**
+     * Vérifie si le produit est en rupture de stock.
+     *
+     * @return true si le stock est nul
+     */
     public boolean estEnRupture() {
         return quantiteStock == 0;
     }
 
+    /**
+     * Vérifie si le stock est inférieur ou égal au seuil d'alerte.
+     *
+     * @return true si le stock est faible
+     */
     public boolean estStockFaible() {
         return quantiteStock > 0 && quantiteStock <= seuilAlerte;
     }
 
+    /**
+     * Retourne une représentation textuelle du produit.
+     *
+     * @return les informations du produit sous forme de chaîne
+     */
     public String toChaine() {
         StringBuilder sb = new StringBuilder();
+
         sb.append("Produit").append("\n");
         sb.append("id : ").append(id).append("\n");
         sb.append("libelle : ").append(libelle).append("\n");
@@ -152,6 +192,7 @@ public class Produit {
         sb.append("seuilAlerte : ").append(seuilAlerte).append("\n");
         sb.append("disponible : ").append(disponible).append("\n");
         sb.append("categorieId : ").append(categorieId).append("\n");
+
         return sb.toString();
     }
 }

@@ -1,9 +1,14 @@
 package com.saveur221.entities;
 
+/**
+ * Représente une catégorie de produits.
+ */
 public class Categorie {
 
     private int id;
+
     private String nom;
+
     private String description;
 
     public Categorie() {
@@ -39,15 +44,19 @@ public class Categorie {
         this.description = description;
     }
 
-    // Une catégorie contenant des produits ne peut pas être supprimée — cette
-    // règle est vérifiée dans CategorieService, pas ici.
-
+    /**
+     * Retourne une représentation textuelle de la catégorie.
+     *
+     * @return les informations de la catégorie sous forme de chaîne
+     */
     public String toChaine() {
         StringBuilder sb = new StringBuilder();
+
         sb.append("Categorie").append("\n");
         sb.append("id : ").append(id).append("\n");
         sb.append("nom : ").append(nom).append("\n");
         sb.append("description : ").append(description).append("\n");
+
         return sb.toString();
     }
 }
