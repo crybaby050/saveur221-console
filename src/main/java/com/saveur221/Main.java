@@ -2,6 +2,7 @@ package com.saveur221;
 
 import com.saveur221.config.Container;
 import com.saveur221.entities.Utilisateur;
+import com.saveur221.enums.ChoixAccueil;
 import com.saveur221.views.AccueilView;
 import com.saveur221.views.LoginView;
 import com.saveur221.views.Router;
@@ -15,9 +16,9 @@ public class Main {
         Container container = new Container();
 
         AccueilView accueilView = new AccueilView(scanner);
-        accueilView.demarrer();
+        ChoixAccueil choix = accueilView.demander();
 
-        if (!accueilView.aChoisiDeSeConnecter()) {
+        if (choix == ChoixAccueil.QUITTER) {
             System.out.println("Au revoir !");
             return;
         }

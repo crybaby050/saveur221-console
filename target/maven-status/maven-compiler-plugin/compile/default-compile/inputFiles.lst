@@ -38,6 +38,7 @@
 /home/crybaby05/Documents/Ecole 221/PHP/Projet Raustaurant Saveur E221/Application/JAVA/saveur221-console/src/main/java/com/saveur221/repositories/Repository.java
 /home/crybaby05/Documents/Ecole 221/PHP/Projet Raustaurant Saveur E221/Application/JAVA/saveur221-console/src/main/java/com/saveur221/views/UtilisateurView.java
 /home/crybaby05/Documents/Ecole 221/PHP/Projet Raustaurant Saveur E221/Application/JAVA/saveur221-console/src/main/java/com/saveur221/repositories/FactureRepository.java
+/home/crybaby05/Documents/Ecole 221/PHP/Projet Raustaurant Saveur E221/Application/JAVA/saveur221-console/src/main/java/com/saveur221/views/AccueilView.java
 /home/crybaby05/Documents/Ecole 221/PHP/Projet Raustaurant Saveur E221/Application/JAVA/saveur221-console/src/main/java/com/saveur221/exceptions/CompteDesactiveException.java
 /home/crybaby05/Documents/Ecole 221/PHP/Projet Raustaurant Saveur E221/Application/JAVA/saveur221-console/src/main/java/com/saveur221/enums/StatutPaiement.java
 /home/crybaby05/Documents/Ecole 221/PHP/Projet Raustaurant Saveur E221/Application/JAVA/saveur221-console/src/main/java/com/saveur221/enums/StatutCommande.java
