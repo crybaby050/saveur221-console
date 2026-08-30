@@ -109,7 +109,7 @@ public class RecuRepository implements Repository<Recu, Integer> {
     @Override
     public Recu save(Recu entite) {
         String sql = "INSERT INTO recus (numero_recu, paiement_id, type_paiement, montant, date_emission) " +
-                "VALUES (?, ?, ?, ?, ?)";
+                "VALUES (?, ?, ?::type_paiement_recu, ?, ?)";
 
         try (Connection conn = DatabaseConnection.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -137,7 +137,7 @@ public class RecuRepository implements Repository<Recu, Integer> {
     public void update(Recu entite) {
         // Un reçu émis n'a pas vocation à être modifié — fournie pour
         // respecter le contrat Repository<T, ID>, non utilisée en pratique.
-        String sql = "UPDATE recus SET type_paiement = ? WHERE id = ?";
+        String sql = "UPDATE recus SET type_paiement = ?::type_paiement_recu WHERE id = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
