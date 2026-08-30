@@ -43,6 +43,7 @@
 /home/crybaby05/Documents/Ecole 221/PHP/Projet Raustaurant Saveur E221/Application/JAVA/saveur221-console/src/main/java/com/saveur221/enums/StatutPaiement.java
 /home/crybaby05/Documents/Ecole 221/PHP/Projet Raustaurant Saveur E221/Application/JAVA/saveur221-console/src/main/java/com/saveur221/enums/StatutCommande.java
 /home/crybaby05/Documents/Ecole 221/PHP/Projet Raustaurant Saveur E221/Application/JAVA/saveur221-console/src/main/java/com/saveur221/services/FactureService.java
+/home/crybaby05/Documents/Ecole 221/PHP/Projet Raustaurant Saveur E221/Application/JAVA/saveur221-console/src/main/java/com/saveur221/enums/ChoixAccueil.java
 /home/crybaby05/Documents/Ecole 221/PHP/Projet Raustaurant Saveur E221/Application/JAVA/saveur221-console/src/main/java/com/saveur221/exceptions/ClientInexistantException.java
 /home/crybaby05/Documents/Ecole 221/PHP/Projet Raustaurant Saveur E221/Application/JAVA/saveur221-console/src/main/java/com/saveur221/exceptions/MontantPaiementInvalideException.java
 /home/crybaby05/Documents/Ecole 221/PHP/Projet Raustaurant Saveur E221/Application/JAVA/saveur221-console/src/main/java/com/saveur221/exceptions/MotDePasseIncorrectException.java
