@@ -19,12 +19,11 @@ public class CategorieRepository implements Repository<Categorie, Integer> {
 
     @Override
     public Optional<Categorie> findById(Integer id) {
-        String sql = "SELECT id, nom, description FROM categories WHERE id = ?";
+        String sql = "SELECT id, nom, description, image, couleur FROM categories WHERE id = ?";
 
         try (
                 Connection conn = DatabaseConnection.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)
-        ) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
 
             try (ResultSet rs = stmt.executeQuery()) {
@@ -38,21 +37,19 @@ public class CategorieRepository implements Repository<Categorie, Integer> {
         } catch (SQLException e) {
             throw new RuntimeException(
                     "Erreur lors de la recherche de la catégorie : " + e.getMessage(),
-                    e
-            );
+                    e);
         }
     }
 
     @Override
     public List<Categorie> findAll() {
-        String sql = "SELECT id, nom, description FROM categories ORDER BY nom";
+        String sql = "SELECT id, nom, description, image, couleur FROM categories ORDER BY nom";
         List<Categorie> categories = new ArrayList<>();
 
         try (
                 Connection conn = DatabaseConnection.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql);
-                ResultSet rs = stmt.executeQuery()
-        ) {
+                ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
                 categories.add(mapToEntity(rs));
             }
@@ -62,8 +59,7 @@ public class CategorieRepository implements Repository<Categorie, Integer> {
         } catch (SQLException e) {
             throw new RuntimeException(
                     "Erreur lors de la récupération des catégories : " + e.getMessage(),
-                    e
-            );
+                    e);
         }
     }
 
@@ -74,15 +70,13 @@ public class CategorieRepository implements Repository<Categorie, Integer> {
      * @return liste des catégories correspondantes
      */
     public List<Categorie> rechercherParNom(String motCle) {
-        String sql = "SELECT id, nom, description FROM categories " +
-                     "WHERE nom ILIKE ? ORDER BY nom";
+        String sql = "SELECT id, nom, description, image, couleur FROM categories WHERE nom ILIKE ? ORDER BY nom";
 
         List<Categorie> categories = new ArrayList<>();
 
         try (
                 Connection conn = DatabaseConnection.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)
-        ) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, "%" + motCle + "%");
 
             try (ResultSet rs = stmt.executeQuery()) {
@@ -96,8 +90,7 @@ public class CategorieRepository implements Repository<Categorie, Integer> {
         } catch (SQLException e) {
             throw new RuntimeException(
                     "Erreur lors de la recherche de catégories : " + e.getMessage(),
-                    e
-            );
+                    e);
         }
     }
 
@@ -112,8 +105,7 @@ public class CategorieRepository implements Repository<Categorie, Integer> {
 
         try (
                 Connection conn = DatabaseConnection.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)
-        ) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, categorieId);
 
             try (ResultSet rs = stmt.executeQuery()) {
@@ -125,22 +117,17 @@ public class CategorieRepository implements Repository<Categorie, Integer> {
             throw new RuntimeException(
                     "Erreur lors de la vérification des produits liés : "
                             + e.getMessage(),
-                    e
-            );
+                    e);
         }
     }
 
     @Override
     public Categorie save(Categorie entite) {
-        String sql = "INSERT INTO categories (nom, description) VALUES (?, ?)";
+        String sql = "INSERT INTO categories (nom, description, image, couleur) VALUES (?, ?, NULL, NULL)";
 
-        try (
-                Connection conn = DatabaseConnection.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(
-                        sql,
-                        Statement.RETURN_GENERATED_KEYS
-                )
-        ) {
+        try (Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
             stmt.setString(1, entite.getNom());
             stmt.setString(2, entite.getDescription());
             stmt.executeUpdate();
@@ -150,14 +137,10 @@ public class CategorieRepository implements Repository<Categorie, Integer> {
                     entite.setId(keys.getInt(1));
                 }
             }
-
             return entite;
 
         } catch (SQLException e) {
-            throw new RuntimeException(
-                    "Erreur lors de la création de la catégorie : " + e.getMessage(),
-                    e
-            );
+            throw new RuntimeException("Erreur lors de la création de la catégorie : " + e.getMessage(), e);
         }
     }
 
@@ -167,8 +150,7 @@ public class CategorieRepository implements Repository<Categorie, Integer> {
 
         try (
                 Connection conn = DatabaseConnection.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)
-        ) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, entite.getNom());
             stmt.setString(2, entite.getDescription());
             stmt.setInt(3, entite.getId());
@@ -178,8 +160,7 @@ public class CategorieRepository implements Repository<Categorie, Integer> {
             throw new RuntimeException(
                     "Erreur lors de la modification de la catégorie : "
                             + e.getMessage(),
-                    e
-            );
+                    e);
         }
     }
 
@@ -189,8 +170,7 @@ public class CategorieRepository implements Repository<Categorie, Integer> {
 
         try (
                 Connection conn = DatabaseConnection.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)
-        ) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             stmt.executeUpdate();
 
@@ -198,8 +178,7 @@ public class CategorieRepository implements Repository<Categorie, Integer> {
             throw new RuntimeException(
                     "Erreur lors de la suppression de la catégorie : "
                             + e.getMessage(),
-                    e
-            );
+                    e);
         }
     }
 
@@ -214,7 +193,8 @@ public class CategorieRepository implements Repository<Categorie, Integer> {
         return new Categorie(
                 rs.getInt("id"),
                 rs.getString("nom"),
-                rs.getString("description")
-        );
+                rs.getString("description"),
+                rs.getString("image"),
+                rs.getString("couleur"));
     }
 }
